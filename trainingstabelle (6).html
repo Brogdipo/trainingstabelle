@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trainingstabelle</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;min-height:100vh;background:#005078}
+.header{position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.25);background:#005078;border-bottom:4px solid #fad200}
+.header-inner{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:6px 14px}
+#headerLogo{height:74px;width:74px;border-radius:8px;flex-shrink:0;background:#fad200;color:#005078;display:flex;align-items:center;justify-content:center;font-size:2.2rem;overflow:hidden}
+#headerLogo img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.htitle{text-align:center;flex:1;padding:0 10px}
+.htitle h1{font-size:1.4rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#fad200}
+.htitle .sub{font-size:.75rem;letter-spacing:.8px;margin-top:2px;color:rgba(250,210,0,.8)}
+.abtn{border:none;padding:8px 14px;border-radius:6px;font-weight:700;cursor:pointer;font-size:.8rem;letter-spacing:.8px;background:#fad200;color:#005078}
+.nav-tabs{display:flex;justify-content:center;overflow-x:auto;border-bottom:3px solid #fad200;background:#003d5c}
+.nav-tab{padding:10px 14px;cursor:pointer;font-size:.78rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;margin-bottom:-3px;color:rgba(250,210,0,.5)}
+.nav-tab.active{color:#fad200;border-bottom-color:#fad200}
+.nav-tab:hover{background:rgba(0,0,0,.15)}
+.content{max-width:1200px;margin:0 auto;padding:16px 12px}
+.page{display:none}.page.active{display:block}
+.card{background:#fff;border-radius:10px;padding:16px;margin-bottom:12px;box-shadow:0 2px 14px rgba(0,0,0,.12)}
+.card-title{font-size:1rem;font-weight:700;color:#005078;margin-bottom:12px;padding-bottom:7px;border-bottom:2px solid #fad200;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.badge{background:#fad200;color:#005078;padding:2px 9px;border-radius:20px;font-size:.7rem;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{background:#005078;color:#fad200;padding:7px 8px;text-align:left;font-size:.7rem;letter-spacing:.7px;text-transform:uppercase}
+td{padding:6px 8px;border-bottom:1px solid #e8eef4}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f4f7fa}
+.rb{display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;border-radius:50%;font-weight:700;font-size:.7rem;color:#fff}
+.rb1{background:#c8a400}.rb2{background:#888}.rb3{background:#a0522d}
+.md-badge{background:#f0f4f8;color:#005078;border:1px solid #cdd7e0;padding:1px 7px;border-radius:10px;font-size:.65rem;font-weight:700;white-space:nowrap}
+.cat-badge{background:#e8f4fd;color:#005078;padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:700;white-space:nowrap}
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:16px}
+.ov-card{background:#fff;border-radius:10px;padding:16px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+.ov-n{font-size:2rem;font-weight:900;color:#005078}.ov-l{font-size:.72rem;color:#888;font-weight:600;letter-spacing:.7px;text-transform:uppercase;margin-top:3px}
+.next-card{background:linear-gradient(135deg,#005078,#003d5c);color:#fff;border-radius:10px;padding:16px;margin-bottom:12px}
+.next-label{font-size:.68rem;color:#fad200;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+.next-match{font-size:1.1rem;font-weight:700;margin-bottom:4px}
+.next-info{font-size:.82rem;opacity:.85;margin-top:4px}
+.team-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.tchip{padding:7px 12px;border-radius:20px;border:2px solid #005078;background:#fff;color:#005078;cursor:pointer;font-weight:600;font-size:.8rem;display:flex;align-items:center;gap:5px;transition:all .2s}
+.tchip:hover{background:#e8f0f8}.tchip.sel{background:#005078;color:#fad200;border-color:#005078}
+.fr{display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end}
+.fg{display:flex;flex-direction:column;gap:3px;margin-bottom:7px}
+.fg label{font-size:.7rem;font-weight:600;color:#005078;text-transform:uppercase}
+.fg select,.fg input[type=text],.fg input[type=date],.fg input[type=number],.fg textarea{padding:6px 9px;border:2px solid #ddd;border-radius:5px;font-size:.85rem;outline:none;font-family:inherit}
+.fg textarea{width:100%;box-sizing:border-box;resize:vertical}
+.fg select:focus,.fg input:focus{border-color:#005078}
+.btn{border:none;padding:8px 14px;border-radius:6px;font-weight:700;cursor:pointer;font-size:.82rem}
+.bb{background:#005078;color:#fad200}.bb:hover{background:#003d5c}
+.bg{background:#27ae60;color:#fff}.br{background:#c0392b;color:#fff}
+.hl-row td{background:#fffbe0!important}
+.entry-card{background:#f4f7fa;border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.entry-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px}
+.entry-date{font-weight:700;color:#005078;font-size:.85rem}
+.entry-pts{display:flex;flex-wrap:wrap;gap:6px}
+.pt-chip{background:#fff;border:1px solid #dde6ee;border-radius:6px;padding:3px 8px;font-size:.75rem}
+.pt-chip b{color:#005078}
+#admin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;overflow-y:auto}
+.login-box{max-width:360px;margin:60px auto;background:#fff;border-radius:12px;padding:26px;box-shadow:0 8px 40px rgba(0,0,0,.2)}
+.login-box h2{color:#005078;text-align:center;margin-bottom:18px;font-size:1.2rem}
+.login-box input{width:100%;padding:10px;border:2px solid #ddd;border-radius:6px;font-size:.9rem;margin-bottom:12px;outline:none}
+.login-box input:focus{border-color:#005078}
+.login-box .lbtn{width:100%;padding:10px;background:#005078;color:#fad200;border:none;border-radius:6px;font-size:.9rem;font-weight:700;cursor:pointer}
+.err{color:#c0392b;font-size:.8rem;text-align:center;margin-top:7px}
+.admin-wrap{background:#fff;border-radius:10px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,.15);max-width:960px;margin:16px auto}
+.asec{margin-bottom:20px}
+.asec h3{color:#005078;font-size:.82rem;font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-bottom:9px;padding-bottom:5px;border-bottom:2px solid #fad200}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.prow{display:flex;align-items:center;justify-content:space-between;background:#f4f7fa;border-radius:6px;padding:6px 8px;flex-wrap:wrap;row-gap:6px}
+.prow input[type=number]{width:60px}
+.stepper{display:flex;align-items:center;gap:5px}
+.step-btn{width:28px;height:28px;flex-shrink:0;border:none;border-radius:6px;background:#005078;color:#fad200;font-weight:900;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;user-select:none}
+.step-btn:active{background:#003d5c;transform:scale(.94)}
+.stepper input[type=number]{width:46px;text-align:center;padding:5px 2px}
+.prow.psel-active{background:#e8f0f8;box-shadow:inset 0 0 0 2px #005078}
+.prow label{display:flex;align-items:center;gap:8px;cursor:pointer;min-width:0}
+.prow label span{font-size:.82rem;font-weight:600;color:#003d5c;white-space:nowrap}
+.prow input.psel{width:17px;height:17px;flex-shrink:0;accent-color:#005078;cursor:pointer}
+.vslot{display:flex;gap:12px;align-items:flex-start;background:#f4f7fa;border-radius:8px;padding:9px 11px;margin-bottom:8px}
+.vslot-time{font-weight:700;color:#005078;min-width:92px;font-size:.83rem;flex-shrink:0}
+.vslot-body{flex:1;min-width:0}
+.vslot-body input[type=text]{width:100%;box-sizing:border-box}
+.bulk-bar{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;background:#f4f7fa;border-radius:8px;padding:10px;margin-bottom:10px}
+.bulk-bar .fg{margin-bottom:0}
+.plist-item{display:flex;align-items:center;gap:8px;background:#f4f7fa;border-radius:6px;padding:6px 10px;margin-bottom:6px}
+.plist-item span{flex:1;font-size:.85rem;font-weight:600;color:#003d5c}
+.small-btn{font-size:.68rem;background:#005078;color:#fad200;border:none;padding:3px 8px;border-radius:4px;cursor:pointer}
+.warn{color:#c0392b;font-size:.75rem;margin-top:4px}
+.offline-badge{background:#c0392b;color:#fff;padding:2px 8px;border-radius:10px;font-size:.65rem;font-weight:700;margin-left:6px;vertical-align:middle;white-space:nowrap}
+.sp-hero{background:linear-gradient(135deg,#005078,#003d5c);color:#fff;border-radius:12px;padding:26px 22px;margin-bottom:14px;text-align:center}
+.sp-hero h2{font-size:1.5rem;font-weight:900;letter-spacing:1.5px;color:#fad200;text-transform:uppercase;margin-bottom:6px}
+.sp-tagline{display:inline-flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:8px 0 14px}
+.sp-tagline span{background:rgba(250,210,0,.15);border:1.5px solid #fad200;color:#fad200;padding:4px 14px;border-radius:20px;font-weight:800;font-size:.8rem;letter-spacing:1px;text-transform:uppercase}
+.sp-hero p{font-size:.86rem;opacity:.92;max-width:620px;margin:0 auto;line-height:1.55}
+.sp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:12px}
+.sp-card{background:#fff;border-radius:10px;padding:17px 19px;box-shadow:0 2px 14px rgba(0,0,0,.12)}
+.sp-card h3{color:#005078;font-size:.95rem;font-weight:800;margin-bottom:12px;padding-bottom:9px;border-bottom:2px solid #fad200;display:flex;align-items:center;gap:9px}
+.sp-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#005078;color:#fad200;font-weight:900;font-size:.78rem;flex-shrink:0}
+.sp-card ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.sp-card li{font-size:.85rem;line-height:1.4;color:#2c3e50;padding-left:18px;position:relative}
+.sp-card li::before{content:'▸';position:absolute;left:0;top:0;color:#005078;font-weight:900}
+.sp-ex{display:block;color:#8a97a3;font-size:.76rem;font-style:italic;margin-top:2px}
+.sp-card.sp-wide{grid-column:1/-1}
+@media(max-width:580px){.htitle h1{font-size:1rem}#headerLogo{height:52px;width:52px;font-size:1.5rem}.nav-tab{padding:8px 9px;font-size:.7rem}.ov-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+// ── FIREBASE SETUP (classic/compat SDK — funktioniert auch bei lokal geöffneten Dateien,
+//    ES-Module werden von Browsern bei file:// aus Sicherheitsgründen blockiert) ─────────
+(function(){
+  const firebaseConfig = {
+    apiKey: "AIzaSyDl4GVJBq3qrvTdNzHRWMLdFFYXZBeKSsI",
+    authDomain: "vicky-turnier.firebaseapp.com",
+    projectId: "vicky-turnier",
+    storageBucket: "vicky-turnier.firebasestorage.app",
+    messagingSenderId: "744381828845",
+    appId: "1:744381828845:web:f52c960d168b16e66346e4"
+  };
+
+  try {
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    // Eigenes Dokument, damit die Trainings-Tabelle nichts mit dem Turnier-Tool teilt
+    const DOC_COL = "training", DOC_ID = "daten";
+    const ref = db.collection(DOC_COL).doc(DOC_ID);
+
+    window.fbStatus = 'connecting'; // 'online' | 'offline'
+    window.fbSave = async function(data) {
+      try { await ref.set({ payload: JSON.stringify(data) }); window.fbStatus = 'online'; }
+      catch(e) { console.error("Firebase save error:", e); window.fbStatus = 'offline'; }
+    };
+    window.fbListen = function(callback) {
+      ref.onSnapshot((snap) => {
+        window.fbStatus = 'online';
+        if (snap.exists) {
+          try { callback(JSON.parse(snap.data().payload)); }
+          catch(e) { console.error("Firebase parse error:", e); }
+        }
+      }, (err) => { console.error("Firebase listen error:", err); window.fbStatus = 'offline'; });
+    };
+    window.fbInit = async function(defaultData, callback) {
+      try {
+        const snap = await ref.get();
+        window.fbStatus = 'online';
+        if (snap.exists) callback(JSON.parse(snap.data().payload));
+        else { await window.fbSave(defaultData); callback(defaultData); }
+      } catch(e) { console.error("Firebase init error:", e); window.fbStatus = 'offline'; callback(defaultData); }
+      window.fbListen(callback);
+    };
+  } catch(e) {
+    console.error("Firebase setup error:", e);
+    window.fbStatus = 'offline';
+    window.fbInit = async function(defaultData, callback){ callback(defaultData); };
+    window.fbSave = async function(){};
+    window.fbListen = function(){};
+  }
+  window.firebaseReady = true;
+  window.dispatchEvent(new Event('firebaseReady'));
+})();
+</script>
+</head>
+<body>
+<div class="header">
+  <div class="header-inner">
+    <div id="headerLogo">⚽</div>
+    <div class="htitle"><h1>Trainingstabelle</h1><div class="sub">SC Victoria Hamburg · Saison 2026 <span id="sync-badge" class="offline-badge" style="display:none">⚠ Offline-Modus</span></div></div>
+    <button class="abtn" onclick="openAdmin()">⚙ Admin</button>
+  </div>
+</div>
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showPage('overview',this)">Übersicht</div>
+  <div class="nav-tab" onclick="showPage('tabelle',this)">📊 Tabelle</div>
+  <div class="nav-tab" onclick="showPage('verlauf',this)">🗓️ Verlauf</div>
+  <div class="nav-tab" onclick="showPage('meinspieler',this)">⭐ Mein Spieler</div>
+  <div class="nav-tab" onclick="showPage('leistung',this)">🏃 Leistungsdiagnostik</div>
+  <div class="nav-tab" onclick="showPage('video',this)">🎥 Videoanalyse</div>
+  <div class="nav-tab" onclick="showPage('spielprinzipien',this)">📐 Spielprinzipien</div>
+  <div class="nav-tab" onclick="showPage('entwicklung',this)">🧭 Individuelle Entwicklung</div>
+</div>
+<div class="content">
+
+<div class="page active" id="page-overview">
+  <div class="ov-grid">
+    <div class="ov-card"><div class="ov-n" id="ov-players">0</div><div class="ov-l">Spieler</div></div>
+    <div class="ov-card"><div class="ov-n" id="ov-sessions">0</div><div class="ov-l">Einheiten erfasst</div></div>
+    <div class="ov-card"><div class="ov-n" id="ov-points">0</div><div class="ov-l">Punkte vergeben</div></div>
+    <div class="ov-card"><div class="ov-n" id="ov-monthleader">–</div><div class="ov-l">Monatsführung</div></div>
+  </div>
+  <div class="next-card">
+    <div class="next-label">⏰ Nächstes Training</div>
+    <div class="next-match" id="next-training">–</div>
+    <div class="next-info">Trainingstage: Montag · Mittwoch · Freitag</div>
+  </div>
+  <div class="card">
+    <div class="card-title">🏆 Top 3 – Gesamte Saison</div>
+    <div id="ov-top3"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🧺 Materialdienst – aktueller Monat <span class="badge" id="ov-monthbadge"></span></div>
+    <div style="font-size:.8rem;color:#555;margin-bottom:8px">Die 4 Spieler mit den wenigsten Punkten im aktuellen Monat übernehmen den Materialdienst.</div>
+    <div id="ov-material"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">ℹ️ Übungskategorien</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px" id="ov-cats"></div>
+    <div style="font-size:.78rem;color:#888;margin-top:8px">Punkte werden vom Trainer je Übung individuell vergeben (z.B. nach Platzierung, Anzahl Treffer oder Sieg/Niederlage – je nachdem, was zur Übung passt).</div>
+  </div>
+</div>
+
+<div class="page" id="page-tabelle">
+  <div class="card">
+    <div class="fr">
+      <div class="fg"><label>Zeitraum</label><select id="f-zeitraum" onchange="renderTabelle()"></select></div>
+      <div class="fg"><label>Kategorie</label><select id="f-kategorie" onchange="renderTabelle()">
+        <option value="all">Alle Kategorien</option>
+      </select></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📊 Tabelle <span class="badge" id="tab-count-badge">0 Spieler</span></div>
+    <div style="overflow-x:auto"><table>
+      <thead><tr><th></th><th>Spieler</th><th>Einsätze</th><th>Punkte</th><th></th></tr></thead>
+      <tbody id="tabelle-body"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<div class="page" id="page-verlauf">
+  <div class="card">
+    <div class="fr">
+      <div class="fg"><label>Kategorie</label><select id="v-kategorie" onchange="renderVerlauf()">
+        <option value="all">Alle Kategorien</option>
+      </select></div>
+    </div>
+  </div>
+  <div id="verlauf-list"></div>
+</div>
+
+<div class="page" id="page-meinspieler">
+  <div class="card">
+    <div class="card-title">⭐ Mein Spieler</div>
+    <div class="team-chips" id="player-chips"></div>
+    <div style="font-size:.75rem;color:#aaa">Tippe deinen Namen an für deine persönliche Auswertung</div>
+  </div>
+  <div id="ms-content"></div>
+</div>
+
+<div class="page" id="page-leistung">
+  <div class="card">
+    <div class="card-title">🏃 Leistungsdiagnostik <span class="badge" id="leistung-datum-badge"></span></div>
+    <div class="fr" id="leistung-datum-wrap">
+      <div class="fg"><label>Messzeitpunkt</label><select id="l-datum" onchange="renderLeistung()"></select></div>
+    </div>
+    <div style="overflow-x:auto"><table>
+      <thead><tr>
+        <th onclick="sortLeistung('name')" style="cursor:pointer">Spieler <span id="ls-name"></span></th>
+        <th onclick="sortLeistung('groesse')" style="cursor:pointer">Größe (cm) <span id="ls-groesse"></span></th>
+        <th onclick="sortLeistung('s10')" style="cursor:pointer">10m (s) <span id="ls-s10"></span></th>
+        <th onclick="sortLeistung('s20')" style="cursor:pointer">20m (s) <span id="ls-s20"></span></th>
+        <th onclick="sortLeistung('s30')" style="cursor:pointer">30m (s) <span id="ls-s30"></span></th>
+        <th onclick="sortLeistung('weit')" style="cursor:pointer">Weitsprung (m) <span id="ls-weit"></span></th>
+        <th onclick="sortLeistung('yoyo')" style="cursor:pointer">Yoyo-Test <span id="ls-yoyo"></span></th>
+      </tr></thead>
+      <tbody id="leistung-body"></tbody>
+    </table></div>
+    <div style="font-size:.75rem;color:#888;margin-top:8px">Sprintzeiten: bester Wert aus zwei Versuchen. Weitsprung: bester Wert aus bis zu drei Versuchen. Tippe auf eine Spalte, um danach zu sortieren.</div>
+  </div>
+  <div class="card"><div class="card-title">⚡ Beste 10m-Sprinter</div><div id="leistung-top-10m"></div></div>
+  <div class="card"><div class="card-title">🦘 Beste Weitspringer</div><div id="leistung-top-weit"></div></div>
+  <div class="card"><div class="card-title">🔋 Beste Yoyo-Test Ergebnisse</div><div id="leistung-top-yoyo"></div></div>
+</div>
+
+<div class="page" id="page-video">
+  <div class="card">
+    <div class="card-title">🎥 Video-Einzelanalyse</div>
+    <div style="font-size:.8rem;color:#555;margin-bottom:10px;line-height:1.5">
+      Vor dem Training gibt's die Möglichkeit, in 15-Minuten-Slots eure eigenen Videoszenen individuell zu besprechen. Bitte eigenes Videomaterial mitbringen bzw. angeben, welches Thema/welche Szene ihr besprechen wollt.<br>
+      <b>Montags 15:30–16:30 Uhr</b> (4 Slots) · alternativ <b>freitags 18:30–19:00 Uhr</b> (2 Slots).<br>
+      Nach eurer Anfrage bestätige ich den Termin hier auf der Seite.
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Wer bist du?</label><select id="v-who"></select></div>
+      <div class="fg"><label>Woche</label><select id="v-week" onchange="renderVideo()"></select></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📅 Montag · 15:30–16:30 Uhr</div>
+    <div id="v-montag"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📅 Freitag (Alternativtermin) · 18:30–19:00 Uhr</div>
+    <div id="v-freitag"></div>
+  </div>
+</div>
+
+<div class="page" id="page-spielprinzipien">
+  <div class="sp-hero">
+    <h2>Spielprinzipien Vicky</h2>
+    <div class="sp-tagline"><span>Flexibel</span><span>Clever</span><span>Aktiv</span></div>
+    <p>Flexible Lösungen für unterschiedliche Situationen — im Kollektiv über gemeinsame, schlaue Lösungen stärker als der Gegner.</p>
+  </div>
+
+  <div class="sp-grid">
+    <div class="sp-card">
+      <h3><span class="sp-num">1</span> ⚽ Ich habe den Ball</h3>
+      <ul>
+        <li>Ich will Gegner vor Herausforderung stellen<span class="sp-ex">andribbeln</span></li>
+        <li>Ich will Gegner überspielen<span class="sp-ex">an Gegnern vorbei Lösungen finden</span></li>
+        <li>Ich bleibe aktiv in der Aktion<span class="sp-ex">ich spiele und sprinte weiter</span></li>
+        <li>Ich habe einen Blick für den gefährlichsten, möglichen Ball<span class="sp-ex">diagonal nach vorne</span></li>
+        <li>Ich weiß, wie wir clever Gefahr vorbereiten können<span class="sp-ex">Klatschball, zurück um nach vorne zu kommen, ins Zentrum um rauszuspielen, nach außen um ins Zentrum zu spielen</span></li>
+      </ul>
+    </div>
+
+    <div class="sp-card">
+      <h3><span class="sp-num">2</span> 🤝 Mein Mitspieler hat den Ball</h3>
+      <ul>
+        <li>Ich helfe meinem Mitspieler<span class="sp-ex">kein Druck → Feld groß machen, Druck → entgegenkommen</span></li>
+        <li>Ich besetze unangenehme Räume<span class="sp-ex">Tasche, Tiefe, Breite</span></li>
+        <li>Ich bewege mich entgegengesetzt zu meinen Mitspielern<span class="sp-ex">Twitch, flexible Lösungen</span></li>
+        <li>Ich kenne unsere Zielräume<span class="sp-ex">in die Tiefe kommen, Tasche bespielen Klatsch/Dreh, Breite → in den Rücken, 2. Pfosten und Rückraum besetzen</span></li>
+      </ul>
+    </div>
+
+    <div class="sp-card">
+      <h3><span class="sp-num">3</span> 🛡️ Mein Gegenspieler hat den Ball</h3>
+      <ul>
+        <li>Ich lenke meinen Gegner dahin, wo ich ihn haben will<span class="sp-ex">auf schwachen Fuß, nach außen etc.</span></li>
+        <li>Ich bin clever in der Balleroberung<span class="sp-ex">Moment erkennen, Pässe nach vorne verteidigen, „reinschälen“</span></li>
+      </ul>
+    </div>
+
+    <div class="sp-card">
+      <h3><span class="sp-num">4</span> 🔄 Die gegnerische Mannschaft hat den Ball</h3>
+      <ul>
+        <li>Wir können flexibel agieren<span class="sp-ex">hoch pressen, tiefer fallen und lauern</span></li>
+        <li>Ich verteidige mit meiner Mannschaft<span class="sp-ex">ballnah verschieben, ballfern frei lassen</span></li>
+        <li>Ich weiß, wie ich mich bei Ballgewinn aus dem Druck lösen kann</li>
+      </ul>
+    </div>
+
+    <div class="sp-card sp-wide">
+      <h3><span class="sp-num">5</span> 🎯 Standardsituationen</h3>
+      <ul>
+        <li>Wenn ich kann, spiele ich schnell<span class="sp-ex">Einwürfe, Freistöße, Ecken</span></li>
+        <li>Wenn wir uns Zeit nehmen, kenne ich meine Aufgaben</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-entwicklung">
+  <div class="card">
+    <div class="card-title">🧭 Individuelle Entwicklung</div>
+    <div class="team-chips" id="entw-chips"></div>
+    <div style="font-size:.75rem;color:#aaa">Tippe deinen Namen an für dein Spielerprofil</div>
+  </div>
+  <div id="entw-content"></div>
+</div>
+
+</div>
+
+<div id="admin-overlay">
+  <div id="al-wrap">
+    <div class="login-box">
+      <h2>⚙ Admin Login</h2>
+      <input type="password" id="apw" placeholder="Passwort" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="lbtn" onclick="doLogin()">Anmelden</button>
+      <div class="err" id="apw-err" style="display:none">Falsches Passwort</div>
+      <div style="text-align:center;margin-top:12px"><button onclick="closeAdmin()" style="background:none;border:none;color:#aaa;cursor:pointer;font-size:.82rem">Abbrechen</button></div>
+    </div>
+  </div>
+  <div id="ap-wrap" style="display:none;padding:16px">
+    <div class="admin-wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2 style="color:#005078;font-size:1.1rem">⚙ Admin-Bereich</h2>
+        <button onclick="closeAdmin()" class="btn br">✕ Schließen</button>
+      </div>
+
+      <div class="asec">
+        <h3>Neues Ergebnis erfassen</h3>
+        <div class="fr">
+          <div class="fg"><label>Datum</label><input type="date" id="a-date" onchange="checkDateWarn()"></div>
+          <div class="fg"><label>Kategorie</label><select id="a-cat"></select></div>
+        </div>
+        <div class="warn" id="a-datewarn" style="display:none">⚠ Das gewählte Datum ist kein Montag, Mittwoch oder Freitag.</div>
+        <div style="font-size:.75rem;color:#888;margin:8px 0">Punkte je Spieler eintragen (leer/0 = nicht teilgenommen oder keine Punkte). Punktesystem ist dir überlassen – je nach Übung z.B. Platzierung, Toranzahl oder Sieg/Niederlage. Mit den ➖ ➕ Buttons kannst du Punkte antippen statt zu tippen.</div>
+        <div class="bulk-bar">
+          <div class="fg"><label>Punkte</label><input type="number" step="any" id="a-bulkval" style="width:70px" value="0"></div>
+          <div class="fg"><button class="btn bg" onclick="applyBulk(true)">✓ Für Auswahl übernehmen</button></div>
+          <div class="fg"><button class="btn bb" onclick="applyBulk(false)">✓ Für alle übernehmen</button></div>
+          <div class="fg"><button class="btn" style="background:#e2e8ee;color:#005078" onclick="toggleAllSel(true)">☑ Alle auswählen</button></div>
+          <div class="fg"><button class="btn" style="background:#e2e8ee;color:#005078" onclick="toggleAllSel(false)">☐ Auswahl aufheben</button></div>
+          <div class="fg"><button class="btn" style="background:#e2e8ee;color:#005078" onclick="clearAllPoints()">✕ Alle leeren</button></div>
+        </div>
+        <div class="pgrid" id="a-points"></div>
+        <div style="margin-top:10px"><button class="btn bg" onclick="saveEntry()">💾 Ergebnis speichern</button> <span id="a-savemsg" style="font-size:.78rem;color:#27ae60;margin-left:8px"></span></div>
+      </div>
+
+      <div class="asec">
+        <h3>Video-Einzelanalyse — Anfragen</h3>
+        <div id="admin-video"></div>
+      </div>
+
+      <div class="asec">
+        <h3>Individuelle Entwicklung — Spielerprofil erfassen</h3>
+        <div class="fr">
+          <div class="fg"><label>Spieler</label><select id="e-player" onchange="loadEntwForm()"></select></div>
+          <div class="fg"><label>Geburtsdatum</label><input type="date" id="e-geburtsdatum"></div>
+          <div class="fg"><label>Datum</label><input type="date" id="e-datum"></div>
+        </div>
+        <div class="fg"><label>1) Fähigkeit, die den Unterschied macht</label><input type="text" id="e-faehigkeit"></div>
+        <div class="fg"><label>2) Wie oft setze ich sie im Spiel ein? (1 selten – 5 fast immer)</label>
+          <select id="e-haeufigkeit"><option value="">–</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="fg"><label>3) Was hilft mir, sie einzusetzen?</label><textarea id="e-hilft" rows="2"></textarea></div>
+        <div class="fg"><label>4) Was hindert mich, sie einzusetzen?</label><textarea id="e-hindert" rows="2"></textarea></div>
+        <div class="fg"><label>5) Plan: Wie werde ich darin besser bzw. nutze sie häufiger?</label><textarea id="e-plan" rows="2"></textarea></div>
+        <div class="fg"><label>6) Größtes Entwicklungsfeld</label><input type="text" id="e-feld"></div>
+        <div class="fg"><label>7) Was will ich tun, um hierin besser zu werden?</label><textarea id="e-tun" rows="2"></textarea></div>
+        <div class="fg"><label>8) Wo fühle ich mich am wohlsten?</label><input type="text" id="e-wohlsten"></div>
+        <div style="font-size:.78rem;color:#888;margin:8px 0 4px">9) Wo werde ich gerne angespielt? (1 gar nicht gerne – 5 sehr gerne)</div>
+        <div class="fr">
+          <div class="fg"><label>In der Tiefe</label><select id="e-z-tiefe"><option value="">–</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+          <div class="fg"><label>Tasche – Blick nach vorne</label><select id="e-z-vorne"><option value="">–</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+          <div class="fg"><label>Tasche – Blick nach hinten</label><select id="e-z-hinten"><option value="">–</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+          <div class="fg"><label>In der Breite</label><select id="e-z-breite"><option value="">–</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+          <div class="fg"><label>Als Anker</label><select id="e-z-anker"><option value="">–</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        </div>
+        <div style="margin-top:6px"><button class="btn bg" onclick="saveEntwForm()">💾 Profil speichern</button> <span id="e-savemsg" style="font-size:.78rem;color:#27ae60;margin-left:8px"></span></div>
+      </div>
+
+      <div class="asec">
+        <h3>Verlauf verwalten</h3>
+        <div id="admin-verlauf"></div>
+      </div>
+
+      <div class="asec">
+        <h3>Spieler verwalten</h3>
+        <div id="admin-players"></div>
+        <div class="fr" style="margin-top:8px">
+          <div class="fg"><label>Neuer Spieler</label><input type="text" id="a-newplayer" style="width:180px"></div>
+          <div class="fg"><button class="btn bb" onclick="addPlayer()">+ Hinzufügen</button></div>
+        </div>
+      </div>
+
+      <div class="asec">
+        <h3>Backup</h3>
+        <button class="btn bb" onclick="exportData()">⬇ Export (JSON)</button>
+        <label class="btn bb" style="display:inline-block;cursor:pointer">⬆ Import (JSON)<input type="file" id="a-import" accept=".json" style="display:none" onchange="importData(event)"></label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CATS = ['Abschlussspiel','Tschechenrolle','Spielform mit Inhalt','Torschuss','1vs1','3vs3 Umschalten','Hannes','Sonstiges'];
+const MONTHNAMES = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const WEEKDAYNAMES = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+const PW = 'training2026';
+
+function defD(){
+  return {
+    players: ['THIES','ELI','HENRI','IAN','FINNI','MORITZ','ABDI','CARL','MAX','GREGOR',
+              'MYKOLA','WARD','EDDY','NJABU','GAS','LEO','MATTIS','AMIN','LINUS'],
+    entries: [], // {id, date:'YYYY-MM-DD', category, points:{name:number}}
+    videoweeks: [], // {monday:'YYYY-MM-DD', slots:[{id,day,time,player,thema,status}]}
+    entwicklung: {}, // { NAME: {geburtsdatum,datum,faehigkeit,haeufigkeit,hilft,hindert,plan,feld,tun,wohlsten,zonen:{tiefe,vorne,hinten,breite,anker}} }
+    leistung: [
+      { date:'2026-07-06', data: {
+        'ELI':    {groesse:159,   s10a:2.03, s10b:1.98, s20a:3.51, s20b:3.6,  s30a:5.03, s30b:5.08, weit:[1.6,1.67,null],  yoyo:14.4},
+        'CARL':   {groesse:166.5, s10a:1.82, s10b:1.81, s20a:3.29, s20b:3.15, s30a:4.51, s30b:4.47, weit:[2.15,2.21,null], yoyo:17.2},
+        'IAN':    {groesse:170,   s10a:1.74, s10b:1.75, s20a:3.04, s20b:3,    s30a:4.26, s30b:4.29, weit:[2.11,2.18,null], yoyo:17.2},
+        'GREGOR': {groesse:145,   s10a:1.93, s10b:1.92, s20a:3.45, s20b:3.44, s30a:4.87, s30b:4.94, weit:[1.57,1.67,null], yoyo:16.6},
+        'HENRI':  {groesse:164,   s10a:1.86, s10b:1.86, s20a:3.42, s20b:3.49, s30a:4.79, s30b:4.79, weit:[2.06,2.12,null], yoyo:16.6},
+        'SAM':    {groesse:160,   s10a:1.97, s10b:1.93, s20a:3.47, s20b:3.39, s30a:4.84, s30b:4.89, weit:[1.81,1.89,null], yoyo:15.1},
+        'MAX':    {groesse:174,   s10a:1.83, s10b:1.86, s20a:3.26, s20b:3.27, s30a:4.62, s30b:4.72, weit:[1.89,1.9,null],  yoyo:15.2},
+        'MORITZ': {groesse:160,   s10a:1.98, s10b:1.97, s20a:3.45, s20b:3.4,  s30a:4.91, s30b:4.84, weit:[2,1.95,null],    yoyo:15.6},
+        'BEN':    {groesse:176.5, s10a:1.83, s10b:1.84, s20a:3.39, s20b:3.36, s30a:4.64, s30b:4.68, weit:[2.12,2.06,null], yoyo:14.3},
+        'EDDY':   {groesse:160,   s10a:2.01, s10b:1.87, s20a:3.41, s20b:3.42, s30a:5.08, s30b:5.21, weit:[1.94,1.92,null], yoyo:14.2},
+        'LEO':    {groesse:153,   s10a:1.89, s10b:1.84, s20a:3.39, s20b:3.33, s30a:4.71, s30b:4.75, weit:[2.03,2.07,null], yoyo:17.3},
+        'MATTIS': {groesse:187,   s10a:1.69, s10b:1.8,  s20a:3.01, s20b:3.12, s30a:4.42, s30b:4.51, weit:[2.18,2.26,null], yoyo:17.3},
+        'MYKOLA': {groesse:160,   s10a:1.9,  s10b:2,    s20a:3.27, s20b:3.41, s30a:4.94, s30b:4.93, weit:[1.87,1.82,null], yoyo:15.7}
+      }}
+    ]
+  };
+}
+// Führt geladene Daten (Firestore/localStorage, evtl. aus einer älteren Version) mit den
+// aktuellen Default-Feldern zusammen, damit fehlende Reiter/Felder nie zum Absturz führen.
+function mergeDefaults(loaded){
+  const base = defD();
+  if(!loaded || typeof loaded!=='object') return base;
+  const merged = Object.assign({}, base, loaded);
+  if(!Array.isArray(merged.players)) merged.players = base.players;
+  if(!Array.isArray(merged.entries)) merged.entries = base.entries;
+  if(!Array.isArray(merged.videoweeks)) merged.videoweeks = base.videoweeks;
+  if(!Array.isArray(merged.leistung)) merged.leistung = base.leistung;
+  if(!merged.entwicklung || typeof merged.entwicklung!=='object' || Array.isArray(merged.entwicklung)) merged.entwicklung = base.entwicklung;
+  return merged;
+}
+
+let D = defD();
+let selPlayer = null;
+let _ignoreNextUpdate = false;
+
+function save(){
+  localStorage.setItem('training_v1', JSON.stringify(D));
+  if(window.fbSave){
+    _ignoreNextUpdate = true;
+    window.fbSave(D);
+    setTimeout(()=>{_ignoreNextUpdate=false;}, 2000);
+  }
+}
+function initFirebase(){
+  window.fbInit(defD(), function(data){
+    if(_ignoreNextUpdate) return;
+    D = mergeDefaults(data);
+    renderAll();
+    if(typeof adminRefresh==='function') try{adminRefresh();}catch(e){}
+  });
+}
+if(window.firebaseReady){ initFirebase(); }
+else {
+  window.addEventListener('firebaseReady', initFirebase);
+  const raw = localStorage.getItem('training_v1');
+  if(raw) try{ D = mergeDefaults(JSON.parse(raw)); }catch(e){}
+}
+
+// ── HELPERS ───────────────────────────────────────────────────
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function monthKey(dateStr){ return (dateStr||'').slice(0,7); }
+function monthLabel(mk){
+  const [y,m] = mk.split('-').map(Number);
+  return MONTHNAMES[m-1]+' '+y;
+}
+function currentMonthKey(){ return monthKey(todayISO()); }
+function fmtDate(dateStr){
+  const d = new Date(dateStr+'T00:00:00');
+  return WEEKDAYNAMES[d.getDay()].slice(0,2)+', '+d.toLocaleDateString('de-DE');
+}
+function isTrainingsDay(dateStr){
+  const d = new Date(dateStr+'T00:00:00');
+  return [1,3,5].includes(d.getDay());
+}
+function nextTrainingDate(){
+  const d = new Date();
+  for(let i=0;i<8;i++){
+    if([1,3,5].includes(d.getDay())) return d;
+    d.setDate(d.getDate()+1);
+  }
+  return d;
+}
+
+function filteredEntries(monthFilter, catFilter){
+  return D.entries.filter(e=>{
+    if(monthFilter && monthFilter!=='all' && monthKey(e.date)!==monthFilter) return false;
+    if(catFilter && catFilter!=='all' && e.category!==catFilter) return false;
+    return true;
+  });
+}
+
+function buildTable(entries){
+  const map = {};
+  D.players.forEach(p=>{ map[p] = {name:p, points:0, einsaetze:0}; });
+  entries.forEach(e=>{
+    Object.entries(e.points||{}).forEach(([name,pts])=>{
+      const v = parseFloat(pts)||0;
+      if(!map[name]) map[name] = {name, points:0, einsaetze:0};
+      map[name].points += v;
+      map[name].einsaetze++;
+    });
+  });
+  return Object.values(map).sort((a,b)=>b.points-a.points || a.name.localeCompare(b.name));
+}
+
+// Materialdienst: die 4 punkteschwächsten Spieler des AKTUELLEN Monats (über alle Kategorien),
+// unabhängig vom aktuell gewählten Tabellen-Filter.
+function materialdienstListe(){
+  const entries = filteredEntries(currentMonthKey(),'all');
+  const tab = buildTable(entries).filter(r=>r.einsaetze>0);
+  if(!tab.length) return [];
+  tab.sort((a,b)=>a.points-b.points || a.name.localeCompare(b.name));
+  return tab.slice(0, Math.min(4, tab.length)).map(r=>r.name);
+}
+
+function availableMonths(){
+  const set = new Set(D.entries.map(e=>monthKey(e.date)));
+  return Array.from(set).sort().reverse();
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────
+function showPage(id, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  if(id==='tabelle') renderTabelle();
+  if(id==='verlauf') renderVerlauf();
+  if(id==='meinspieler') renderMeinSpieler();
+  if(id==='leistung') renderLeistung();
+  if(id==='video') renderVideo();
+  if(id==='entwicklung') renderEntwicklung();
+}
+
+// ── RENDER: ÜBERSICHT ────────────────────────────────────────
+function renderOverview(){
+  document.getElementById('ov-players').textContent = D.players.length;
+  const sessions = new Set(D.entries.map(e=>e.date+'|'+e.category));
+  document.getElementById('ov-sessions').textContent = sessions.size;
+  let totalPts = 0;
+  D.entries.forEach(e=>Object.values(e.points||{}).forEach(p=>totalPts+=(parseFloat(p)||0)));
+  document.getElementById('ov-points').textContent = totalPts;
+
+  const monthTab = buildTable(filteredEntries(currentMonthKey(),'all')).filter(r=>r.einsaetze>0);
+  document.getElementById('ov-monthleader').textContent = monthTab.length ? monthTab[0].name : '–';
+  document.getElementById('ov-monthbadge').textContent = monthLabel(currentMonthKey());
+
+  const nd = nextTrainingDate();
+  document.getElementById('next-training').textContent = WEEKDAYNAMES[nd.getDay()]+', '+nd.toLocaleDateString('de-DE');
+
+  const gesamtTab = buildTable(D.entries).filter(r=>r.einsaetze>0);
+  const top3 = gesamtTab.slice(0,3);
+  document.getElementById('ov-top3').innerHTML = top3.length ? top3.map((r,i)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 0">
+      <span class="rb ${['rb1','rb2','rb3'][i]}">${i+1}</span>
+      <span style="font-weight:700;color:#003d5c;flex:1">${r.name}</span>
+      <span style="color:#005078;font-weight:700">${r.points} Pkt</span>
+    </div>`).join('') : '<p style="color:#aaa;font-style:italic;font-size:.85rem">Noch keine Ergebnisse erfasst.</p>';
+
+  const md = materialdienstListe();
+  document.getElementById('ov-material').innerHTML = md.length ? md.map(n=>`<span class="md-badge">🧺 ${n}</span>`).join(' ') :
+    '<p style="color:#aaa;font-style:italic;font-size:.85rem">Noch keine Ergebnisse in diesem Monat erfasst.</p>';
+
+  document.getElementById('ov-cats').innerHTML = CATS.map(c=>`<span class="cat-badge">${c}</span>`).join('');
+}
+
+// ── RENDER: TABELLE ──────────────────────────────────────────
+function fillFilterSelects(){
+  const zSel = document.getElementById('f-zeitraum');
+  const cur = zSel.value;
+  zSel.innerHTML = `<option value="all">Gesamte Saison</option><option value="${currentMonthKey()}">Aktueller Monat (${monthLabel(currentMonthKey())})</option>`;
+  availableMonths().filter(mk=>mk!==currentMonthKey()).forEach(mk=>{
+    zSel.innerHTML += `<option value="${mk}">${monthLabel(mk)}</option>`;
+  });
+  if([...zSel.options].some(o=>o.value===cur)) zSel.value = cur;
+
+  ['f-kategorie','v-kategorie','a-cat'].forEach(id=>{
+    const sel = document.getElementById(id);
+    const curV = sel.value;
+    const base = id==='a-cat' ? '' : (id==='v-kategorie' ? '<option value="all">Alle Kategorien</option>' : '<option value="all">Alle Kategorien</option>');
+    sel.innerHTML = base + CATS.map(c=>`<option value="${c}">${c}</option>`).join('');
+    if([...sel.options].some(o=>o.value===curV)) sel.value = curV;
+  });
+}
+
+function renderTabelle(){
+  const zeitraum = document.getElementById('f-zeitraum').value || 'all';
+  const kategorie = document.getElementById('f-kategorie').value || 'all';
+  const entries = filteredEntries(zeitraum, kategorie);
+  const tab = buildTable(entries);
+  const md = materialdienstListe();
+  document.getElementById('tab-count-badge').textContent = tab.filter(r=>r.einsaetze>0).length + ' aktiv';
+  document.getElementById('tabelle-body').innerHTML = tab.map((r,i)=>{
+    const medal = i<3 && r.einsaetze>0 ? `<span class="rb ${['rb1','rb2','rb3'][i]}">${i+1}</span>` : (i+1);
+    const isMd = md.includes(r.name);
+    return `<tr>
+      <td>${medal}</td>
+      <td style="font-weight:600">${r.name}</td>
+      <td>${r.einsaetze}</td>
+      <td style="font-weight:700;color:#005078">${r.points}</td>
+      <td>${isMd?'<span class="md-badge">🧺 Materialdienst</span>':''}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── RENDER: VERLAUF ──────────────────────────────────────────
+function renderVerlauf(){
+  const kategorie = document.getElementById('v-kategorie').value || 'all';
+  const entries = filteredEntries('all', kategorie).slice().sort((a,b)=>b.date.localeCompare(a.date));
+  if(!entries.length){
+    document.getElementById('verlauf-list').innerHTML = '<div class="card"><p style="color:#aaa;font-style:italic">Noch keine Ergebnisse erfasst.</p></div>';
+    return;
+  }
+  document.getElementById('verlauf-list').innerHTML = entries.map(e=>{
+    const pts = Object.entries(e.points||{}).filter(([,v])=>v!==''&&v!==undefined&&v!==null)
+      .sort((a,b)=>(parseFloat(b[1])||0)-(parseFloat(a[1])||0));
+    return `<div class="entry-card">
+      <div class="entry-hdr">
+        <span class="entry-date">${fmtDate(e.date)}</span>
+        <span class="cat-badge">${e.category}</span>
+      </div>
+      <div class="entry-pts">${pts.length?pts.map(([n,v])=>`<span class="pt-chip">${n}: <b>${v}</b></span>`).join(''):'<span style="font-size:.75rem;color:#aaa">Keine Punkte eingetragen</span>'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── RENDER: MEIN SPIELER ─────────────────────────────────────
+function renderPlayerChips(){
+  const html = D.players.map(p=>
+    `<div class="tchip ${p===selPlayer?'sel':''}" onclick="pickPlayer(this,'${p.replace(/'/g,"\\'")}')">${p}</div>`
+  ).join('');
+  const pc = document.getElementById('player-chips');
+  if(pc) pc.innerHTML = html;
+  const ec = document.getElementById('entw-chips');
+  if(ec) ec.innerHTML = html;
+}
+function pickPlayer(el, name){
+  selPlayer = name;
+  document.querySelectorAll('#player-chips .tchip, #entw-chips .tchip').forEach(c=>c.classList.toggle('sel', c.textContent===name));
+  renderMeinSpieler();
+  renderEntwicklung();
+}
+function renderMeinSpieler(){
+  renderPlayerChips();
+  const box = document.getElementById('ms-content');
+  if(!selPlayer){ box.innerHTML=''; return; }
+  const gesamtTab = buildTable(D.entries);
+  const rank = gesamtTab.findIndex(r=>r.name===selPlayer)+1;
+  const me = gesamtTab.find(r=>r.name===selPlayer) || {points:0,einsaetze:0};
+  const md = materialdienstListe().includes(selPlayer);
+
+  const perCat = CATS.map(c=>{
+    const t = buildTable(filteredEntries('all', c)).find(r=>r.name===selPlayer) || {points:0,einsaetze:0};
+    return {cat:c, ...t};
+  });
+
+  const mine = D.entries.filter(e=>e.points && e.points[selPlayer]!==undefined && e.points[selPlayer]!=='')
+    .slice().sort((a,b)=>b.date.localeCompare(a.date));
+
+  const leistungEntries = (D.leistung||[])
+    .filter(m=>m.data && m.data[selPlayer])
+    .map(m=>({date:m.date, ...computeLeistungRow(m.data[selPlayer])}))
+    .sort((a,b)=>b.date.localeCompare(a.date));
+
+  let html = `<div class="card">
+    <div class="card-title">⭐ ${selPlayer}</div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:8px">
+      <div><div class="ov-n" style="font-size:1.6rem">${rank||'–'}</div><div class="ov-l">Platz gesamt</div></div>
+      <div><div class="ov-n" style="font-size:1.6rem">${me.points}</div><div class="ov-l">Punkte</div></div>
+      <div><div class="ov-n" style="font-size:1.6rem">${me.einsaetze}</div><div class="ov-l">Einsätze</div></div>
+    </div>
+    ${md?'<span class="md-badge">🧺 Materialdienst diesen Monat</span>':''}
+  </div>
+  <div class="card"><div class="card-title">📋 Punkte nach Kategorie</div>
+    <table><thead><tr><th>Kategorie</th><th>Einsätze</th><th>Punkte</th></tr></thead><tbody>
+    ${perCat.map(c=>`<tr><td>${c.cat}</td><td>${c.einsaetze}</td><td style="font-weight:700;color:#005078">${c.points}</td></tr>`).join('')}
+    </tbody></table>
+  </div>
+  <div class="card"><div class="card-title">🏃 Leistungsdiagnostik</div>
+    ${leistungEntries.length ? `<div style="overflow-x:auto"><table><thead><tr><th>Datum</th><th>Größe (cm)</th><th>10m (s)</th><th>20m (s)</th><th>30m (s)</th><th>Weitsprung (m)</th><th>Yoyo-Test</th></tr></thead><tbody>
+    ${leistungEntries.map(e=>`<tr>
+      <td style="font-weight:600">${fmtDate(e.date)}</td>
+      <td>${e.groesse ?? '–'}</td>
+      <td>${e.s10.toFixed(2)}</td>
+      <td>${e.s20.toFixed(2)}</td>
+      <td>${e.s30.toFixed(2)}</td>
+      <td>${e.weit!==null ? e.weit.toFixed(2) : '–'}</td>
+      <td>${e.yoyo ?? '–'}</td>
+    </tr>`).join('')}
+    </tbody></table></div>` : '<p style="color:#aaa;font-style:italic;font-size:.85rem">Noch keine Leistungsdaten für diesen Spieler erfasst.</p>'}
+  </div>
+  <div class="card"><div class="card-title">🗓️ Verlauf</div>`;
+  html += mine.length ? mine.map(e=>`<div class="entry-card"><div class="entry-hdr"><span class="entry-date">${fmtDate(e.date)}</span><span class="cat-badge">${e.category}</span></div><div class="entry-pts"><span class="pt-chip">Punkte: <b>${e.points[selPlayer]}</b></span></div></div>`).join('')
+    : '<p style="color:#aaa;font-style:italic;font-size:.85rem">Noch keine Einträge.</p>';
+  html += '</div>';
+  box.innerHTML = html;
+}
+
+// ── RENDER: INDIVIDUELLE ENTWICKLUNG ─────────────────────────
+const ZONE_LABELS = {tiefe:'In der Tiefe', vorne:'Tasche – Blick nach vorne', hinten:'Tasche – Blick nach hinten', breite:'In der Breite', anker:'Als Anker'};
+function renderEntwicklung(){
+  renderPlayerChips();
+  const box = document.getElementById('entw-content');
+  if(!box) return;
+  if(!selPlayer){ box.innerHTML=''; return; }
+  const p = (D.entwicklung||{})[selPlayer];
+  if(!p){
+    box.innerHTML = `<div class="card"><div class="card-title">🧭 ${selPlayer}</div>
+      <p style="color:#aaa;font-style:italic;font-size:.85rem">Für diesen Spieler wurde noch kein Spielerprofil erfasst.</p></div>`;
+    return;
+  }
+  const zonenRows = Object.entries(ZONE_LABELS).map(([k,label])=>
+    `<tr><td>${label}</td><td style="font-weight:700;color:#005078">${p.zonen && p.zonen[k] ? p.zonen[k] : '–'}</td></tr>`
+  ).join('');
+  box.innerHTML = `<div class="card">
+    <div class="card-title">🧭 ${selPlayer}</div>
+    <div style="font-size:.78rem;color:#888;margin-bottom:10px">${p.geburtsdatum?('Geburtsdatum: '+fmtDate(p.geburtsdatum)+' · '):''}${p.datum?('Erfasst am: '+fmtDate(p.datum)):''}</div>
+    <div class="fg"><label style="font-weight:700;color:#003d5c">1) Fähigkeit, die den Unterschied macht</label><div>${p.faehigkeit||'–'}</div></div>
+    <div class="fg"><label style="font-weight:700;color:#003d5c">2) Einsatz im Spiel</label><div>${p.haeufigkeit?p.haeufigkeit+' / 5':'–'}</div></div>
+    <div class="fg"><label style="font-weight:700;color:#003d5c">3) Was hilft mir, sie einzusetzen?</label><div>${p.hilft||'–'}</div></div>
+    <div class="fg"><label style="font-weight:700;color:#003d5c">4) Was hindert mich, sie einzusetzen?</label><div>${p.hindert||'–'}</div></div>
+    <div class="fg"><label style="font-weight:700;color:#003d5c">5) Plan: Wie werde ich darin besser?</label><div>${p.plan||'–'}</div></div>
+    <div class="fg"><label style="font-weight:700;color:#003d5c">6) Größtes Entwicklungsfeld</label><div>${p.feld||'–'}</div></div>
+    <div class="fg"><label style="font-weight:700;color:#003d5c">7) Was will ich tun, um besser zu werden?</label><div>${p.tun||'–'}</div></div>
+    <div class="fg"><label style="font-weight:700;color:#003d5c">8) Wo fühle ich mich am wohlsten?</label><div>${p.wohlsten||'–'}</div></div>
+  </div>
+  <div class="card"><div class="card-title">9) Wo werde ich gerne angespielt?</div>
+    <table><thead><tr><th>Zone</th><th>Bewertung</th></tr></thead><tbody>${zonenRows}</tbody></table>
+  </div>`;
+}
+function fillEntwPlayerSelect(){
+  const sel = document.getElementById('e-player');
+  if(!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">– Spieler wählen –</option>' + D.players.slice().sort().map(p=>`<option value="${p}">${p}</option>`).join('');
+  if(D.players.includes(cur)) sel.value = cur;
+  loadEntwForm();
+}
+function loadEntwForm(){
+  const name = document.getElementById('e-player').value;
+  const p = name ? (D.entwicklung||{})[name] : null;
+  const ids = ['e-geburtsdatum','e-datum','e-faehigkeit','e-haeufigkeit','e-hilft','e-hindert','e-plan','e-feld','e-tun','e-wohlsten','e-z-tiefe','e-z-vorne','e-z-hinten','e-z-breite','e-z-anker'];
+  ids.forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  if(!p) return;
+  if(p.geburtsdatum) document.getElementById('e-geburtsdatum').value = p.geburtsdatum;
+  if(p.datum) document.getElementById('e-datum').value = p.datum;
+  if(p.faehigkeit) document.getElementById('e-faehigkeit').value = p.faehigkeit;
+  if(p.haeufigkeit) document.getElementById('e-haeufigkeit').value = p.haeufigkeit;
+  if(p.hilft) document.getElementById('e-hilft').value = p.hilft;
+  if(p.hindert) document.getElementById('e-hindert').value = p.hindert;
+  if(p.plan) document.getElementById('e-plan').value = p.plan;
+  if(p.feld) document.getElementById('e-feld').value = p.feld;
+  if(p.tun) document.getElementById('e-tun').value = p.tun;
+  if(p.wohlsten) document.getElementById('e-wohlsten').value = p.wohlsten;
+  if(p.zonen){
+    if(p.zonen.tiefe) document.getElementById('e-z-tiefe').value = p.zonen.tiefe;
+    if(p.zonen.vorne) document.getElementById('e-z-vorne').value = p.zonen.vorne;
+    if(p.zonen.hinten) document.getElementById('e-z-hinten').value = p.zonen.hinten;
+    if(p.zonen.breite) document.getElementById('e-z-breite').value = p.zonen.breite;
+    if(p.zonen.anker) document.getElementById('e-z-anker').value = p.zonen.anker;
+  }
+}
+function saveEntwForm(){
+  const name = document.getElementById('e-player').value;
+  if(!name){ alert('Bitte zuerst einen Spieler auswählen.'); return; }
+  if(!D.entwicklung) D.entwicklung = {};
+  D.entwicklung[name] = {
+    geburtsdatum: document.getElementById('e-geburtsdatum').value,
+    datum: document.getElementById('e-datum').value,
+    faehigkeit: document.getElementById('e-faehigkeit').value,
+    haeufigkeit: document.getElementById('e-haeufigkeit').value,
+    hilft: document.getElementById('e-hilft').value,
+    hindert: document.getElementById('e-hindert').value,
+    plan: document.getElementById('e-plan').value,
+    feld: document.getElementById('e-feld').value,
+    tun: document.getElementById('e-tun').value,
+    wohlsten: document.getElementById('e-wohlsten').value,
+    zonen: {
+      tiefe: document.getElementById('e-z-tiefe').value,
+      vorne: document.getElementById('e-z-vorne').value,
+      hinten: document.getElementById('e-z-hinten').value,
+      breite: document.getElementById('e-z-breite').value,
+      anker: document.getElementById('e-z-anker').value
+    }
+  };
+  save();
+  renderEntwicklung();
+  const msg = document.getElementById('e-savemsg');
+  msg.textContent = '✓ Gespeichert';
+  setTimeout(()=>{ msg.textContent=''; }, 2500);
+}
+
+// ── RENDER: LEISTUNGSDIAGNOSTIK ───────────────────────────────
+function computeLeistungRow(d){
+  const weitWerte = d.weit.filter(v=>v!==null && v!==undefined && v!=='');
+  return {
+    groesse: d.groesse,
+    s10: Math.min(d.s10a, d.s10b),
+    s20: Math.min(d.s20a, d.s20b),
+    s30: Math.min(d.s30a, d.s30b),
+    weit: weitWerte.length ? Math.max(...weitWerte) : null,
+    yoyo: d.yoyo
+  };
+}
+function leistungRows(meas){
+  return Object.entries(meas.data).map(([name,d])=>({name, ...computeLeistungRow(d)}));
+}
+let leistungSortKey = 'name';
+let leistungSortDir = 'asc';
+function sortLeistung(key){
+  if(leistungSortKey===key){ leistungSortDir = leistungSortDir==='asc' ? 'desc' : 'asc'; }
+  else { leistungSortKey = key; leistungSortDir = 'asc'; }
+  renderLeistung();
+}
+function sortRows(rows, key, dir){
+  return rows.slice().sort((a,b)=>{
+    let av = a[key], bv = b[key];
+    const aMiss = av===null || av===undefined, bMiss = bv===null || bv===undefined;
+    if(aMiss && bMiss) return 0;
+    if(aMiss) return 1;
+    if(bMiss) return -1;
+    if(typeof av==='string') return dir==='asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    return dir==='asc' ? av-bv : bv-av;
+  });
+}
+function renderTopCard(id, rows, key, dir, fmt){
+  const sorted = rows.slice().sort((a,b)=> dir==='asc' ? a[key]-b[key] : b[key]-a[key]).slice(0,3);
+  document.getElementById(id).innerHTML = sorted.length ? sorted.map((r,i)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 0">
+      <span class="rb ${['rb1','rb2','rb3'][i]}">${i+1}</span>
+      <span style="font-weight:700;color:#003d5c;flex:1">${r.name}</span>
+      <span style="color:#005078;font-weight:700">${fmt(r[key])}</span>
+    </div>`).join('') : '<p style="color:#aaa;font-style:italic;font-size:.85rem">Keine Daten.</p>';
+}
+function renderLeistung(){
+  if(!D.leistung || !D.leistung.length){
+    document.getElementById('leistung-body').innerHTML = '';
+    document.getElementById('leistung-datum-badge').textContent = '';
+    return;
+  }
+  const sel = document.getElementById('l-datum');
+  const cur = sel.value;
+  sel.innerHTML = D.leistung.map(m=>`<option value="${m.date}">${fmtDate(m.date)}</option>`).join('');
+  if([...sel.options].some(o=>o.value===cur)) sel.value = cur;
+  document.getElementById('leistung-datum-wrap').style.display = D.leistung.length>1 ? 'flex' : 'none';
+
+  const chosen = sel.value || D.leistung[D.leistung.length-1].date;
+  const meas = D.leistung.find(m=>m.date===chosen) || D.leistung[D.leistung.length-1];
+  const rows = sortRows(leistungRows(meas), leistungSortKey, leistungSortDir);
+
+  ['name','groesse','s10','s20','s30','weit','yoyo'].forEach(k=>{
+    const el = document.getElementById('ls-'+k);
+    if(el) el.textContent = leistungSortKey===k ? (leistungSortDir==='asc' ? '▲' : '▼') : '';
+  });
+
+  document.getElementById('leistung-datum-badge').textContent = fmtDate(meas.date);
+  document.getElementById('leistung-body').innerHTML = rows.map(r=>`<tr>
+    <td style="font-weight:600">${r.name}</td>
+    <td>${r.groesse ?? '–'}</td>
+    <td>${r.s10.toFixed(2)}</td>
+    <td>${r.s20.toFixed(2)}</td>
+    <td>${r.s30.toFixed(2)}</td>
+    <td>${r.weit!==null ? r.weit.toFixed(2) : '–'}</td>
+    <td>${r.yoyo ?? '–'}</td>
+  </tr>`).join('');
+
+  const unsorted = leistungRows(meas);
+  renderTopCard('leistung-top-10m', unsorted, 's10', 'asc', v=>v.toFixed(2)+' s');
+  renderTopCard('leistung-top-weit', unsorted.filter(r=>r.weit!==null), 'weit', 'desc', v=>v.toFixed(2)+' m');
+  renderTopCard('leistung-top-yoyo', unsorted, 'yoyo', 'desc', v=>v);
+}
+
+// ── RENDER: VIDEO-EINZELANALYSE ───────────────────────────────
+function dISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function mondayOfISO(dateStr){
+  const d = new Date(dateStr+'T00:00:00');
+  const day = d.getDay();
+  d.setDate(d.getDate() + (day===0 ? -6 : 1-day));
+  return dISO(d);
+}
+function addDaysISO(dateStr, days){
+  const d = new Date(dateStr+'T00:00:00');
+  d.setDate(d.getDate()+days);
+  return dISO(d);
+}
+function makeWeekSlots(){
+  return [
+    {id:'mo1', day:'Montag', time:'15:30–15:45', requests:[], confirmed:null},
+    {id:'mo2', day:'Montag', time:'15:45–16:00', requests:[], confirmed:null},
+    {id:'mo3', day:'Montag', time:'16:00–16:15', requests:[], confirmed:null},
+    {id:'mo4', day:'Montag', time:'16:15–16:30', requests:[], confirmed:null},
+    {id:'fr1', day:'Freitag', time:'18:30–18:45', requests:[], confirmed:null},
+    {id:'fr2', day:'Freitag', time:'18:45–19:00', requests:[], confirmed:null}
+  ];
+}
+function ensureWeek(mondayISO){
+  if(!D.videoweeks) D.videoweeks = [];
+  let w = D.videoweeks.find(w=>w.monday===mondayISO);
+  if(!w){
+    w = {monday: mondayISO, slots: makeWeekSlots()};
+    D.videoweeks.push(w);
+    D.videoweeks.sort((a,b)=>a.monday.localeCompare(b.monday));
+    save();
+  }
+  return w;
+}
+function renderSlotRow(week, slot){
+  if(!slot.requests) slot.requests = [];
+  const uid = week.monday+'_'+slot.id;
+  const whoEl = document.getElementById('v-who');
+  const who = whoEl ? whoEl.value : '';
+  const myReq = who ? slot.requests.find(r=>r.player===who) : null;
+
+  let body = '';
+  if(slot.confirmed){
+    const confReq = slot.requests.find(r=>r.player===slot.confirmed);
+    body += `<div style="font-weight:700;color:#003d5c">${slot.confirmed} <span class="badge" style="background:#27ae60;color:#fff">✓ bestätigt</span></div>
+      <div style="font-size:.8rem;color:#555;margin-top:2px">${confReq ? confReq.thema : ''}</div>`;
+    if(who===slot.confirmed){
+      body += `<button class="btn br" style="margin-top:6px" onclick="cancelSlot('${week.monday}','${slot.id}')">✕ Absagen</button>`;
+    }
+  } else {
+    if(slot.requests.length){
+      body += `<div style="font-size:.75rem;color:#888;margin-bottom:4px">${slot.requests.length} Anfrage${slot.requests.length>1?'n':''} — Bestätigung folgt</div>` +
+        slot.requests.map(r=>`<div style="font-size:.8rem;margin-top:4px"><b>${r.player}</b> <span class="badge" style="background:#e8a93c;color:#fff">⏳ angefragt</span><br><span style="color:#666">${r.thema}</span></div>`).join('');
+    }
+    if(myReq){
+      body += `<button class="btn br" style="margin-top:8px" onclick="cancelSlot('${week.monday}','${slot.id}')">✕ Anfrage zurückziehen</button>`;
+    } else {
+      body += `<div style="margin-top:8px">
+        <input type="text" id="vt_${uid}" placeholder="Thema / Szene, die du besprechen möchtest">
+        <button class="btn bg" style="margin-top:6px" onclick="bookSlot('${week.monday}','${slot.id}')">📩 ${slot.requests.length ? 'Ebenfalls anfragen' : 'Anfragen'}</button>
+      </div>`;
+    }
+  }
+  return `<div class="vslot"><div class="vslot-time">${slot.time}</div><div class="vslot-body">${body}</div></div>`;
+}
+function renderVideo(){
+  const whoSel = document.getElementById('v-who');
+  const weekSel = document.getElementById('v-week');
+  if(!whoSel || !weekSel) return;
+
+  const curMonday = mondayOfISO(todayISO());
+  const nextMonday = addDaysISO(curMonday, 7);
+  ensureWeek(curMonday);
+  ensureWeek(nextMonday);
+
+  const prevWho = whoSel.value;
+  whoSel.innerHTML = '<option value="">– Name wählen –</option>' +
+    D.players.slice().sort().map(p=>`<option value="${p}">${p}</option>`).join('');
+  if(D.players.includes(prevWho)) whoSel.value = prevWho;
+
+  const prevWeek = weekSel.value;
+  const weeks = D.videoweeks.filter(w=>w.monday>=curMonday).sort((a,b)=>a.monday.localeCompare(b.monday));
+  weekSel.innerHTML = weeks.map(w=>`<option value="${w.monday}">Woche ab ${fmtDate(w.monday)}</option>`).join('');
+  if(weeks.some(w=>w.monday===prevWeek)) weekSel.value = prevWeek;
+  else weekSel.value = curMonday;
+
+  const chosen = weekSel.value || curMonday;
+  const week = D.videoweeks.find(w=>w.monday===chosen) || weeks[0];
+  if(!week) return;
+
+  document.getElementById('v-montag').innerHTML = week.slots.filter(s=>s.day==='Montag').map(s=>renderSlotRow(week,s)).join('');
+  document.getElementById('v-freitag').innerHTML = week.slots.filter(s=>s.day==='Freitag').map(s=>renderSlotRow(week,s)).join('');
+}
+function bookSlot(monday, slotId){
+  const who = document.getElementById('v-who').value;
+  if(!who){ alert('Bitte zuerst deinen Namen auswählen.'); return; }
+  const uid = monday+'_'+slotId;
+  const themaEl = document.getElementById('vt_'+uid);
+  const thema = themaEl ? themaEl.value.trim() : '';
+  if(!thema){ alert('Bitte kurz angeben, welche Szene bzw. welches Thema du besprechen möchtest.'); return; }
+  const week = D.videoweeks.find(w=>w.monday===monday);
+  const slot = week && week.slots.find(s=>s.id===slotId);
+  if(!slot) return;
+  if(!slot.requests) slot.requests = [];
+  if(slot.confirmed){ alert('Dieser Slot ist bereits vergeben.'); renderVideo(); return; }
+  if(slot.requests.some(r=>r.player===who)){ alert('Du hast diesen Slot schon angefragt.'); return; }
+  slot.requests.push({player:who, thema});
+  save();
+  renderVideo();
+}
+function cancelSlot(monday, slotId){
+  const who = document.getElementById('v-who').value;
+  const week = D.videoweeks.find(w=>w.monday===monday);
+  const slot = week && week.slots.find(s=>s.id===slotId);
+  if(!slot) return;
+  slot.requests = (slot.requests||[]).filter(r=>r.player!==who);
+  if(slot.confirmed===who) slot.confirmed = null;
+  save();
+  renderVideo();
+}
+function renderAdminVideo(){
+  const el = document.getElementById('admin-video');
+  if(!el) return;
+  if(!D.videoweeks || !D.videoweeks.length){
+    el.innerHTML = '<p style="color:#aaa;font-style:italic;font-size:.85rem">Noch keine Wochen angelegt.</p>';
+    return;
+  }
+  const weeks = D.videoweeks.slice().sort((a,b)=>a.monday.localeCompare(b.monday));
+  let html = '';
+  weeks.forEach(w=>{
+    const relevant = w.slots.filter(s=>(s.requests && s.requests.length) || s.confirmed);
+    if(!relevant.length) return;
+    html += `<div style="margin-bottom:12px"><div style="font-weight:700;color:#005078;margin-bottom:6px;font-size:.85rem">Woche ab ${fmtDate(w.monday)}</div>`;
+    relevant.forEach(s=>{
+      html += `<div style="background:#f4f7fa;border-radius:8px;padding:8px 10px;margin-bottom:8px">
+        <div style="font-weight:700;font-size:.82rem;color:#003d5c;margin-bottom:4px">${s.day} ${s.time}</div>`;
+      (s.requests||[]).forEach(r=>{
+        const isConf = s.confirmed===r.player;
+        const badge = isConf
+          ? '<span class="badge" style="background:#27ae60;color:#fff">✓ bestätigt</span>'
+          : '<span class="badge" style="background:#e8a93c;color:#fff">⏳ angefragt</span>';
+        html += `<div class="prow" style="align-items:flex-start;margin-bottom:6px">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.8rem"><b>${r.player}</b> ${badge}</div>
+            <div style="font-size:.78rem;color:#666;margin-top:2px">${r.thema || '–'}</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            ${!isConf ? `<button class="btn bg" style="padding:6px 10px" onclick="adminChooseRequest('${w.monday}','${s.id}','${r.player}')">✓ Auswählen</button>` : `<button class="btn" style="padding:6px 10px;background:#e2e8ee;color:#005078" onclick="adminResetSlot('${w.monday}','${s.id}')">↺ Zurücksetzen</button>`}
+            <button class="btn br" style="padding:6px 10px" onclick="adminDeclineRequest('${w.monday}','${s.id}','${r.player}')">✕</button>
+          </div>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+    html += `</div>`;
+  });
+  el.innerHTML = html || '<p style="color:#aaa;font-style:italic;font-size:.85rem">Aktuell keine offenen Anfragen.</p>';
+}
+function adminChooseRequest(monday, slotId, player){
+  const week = D.videoweeks.find(w=>w.monday===monday);
+  const slot = week && week.slots.find(s=>s.id===slotId);
+  if(!slot) return;
+  slot.confirmed = player;
+  save(); renderAll(); adminRefresh();
+}
+function adminDeclineRequest(monday, slotId, player){
+  const week = D.videoweeks.find(w=>w.monday===monday);
+  const slot = week && week.slots.find(s=>s.id===slotId);
+  if(!slot) return;
+  slot.requests = (slot.requests||[]).filter(r=>r.player!==player);
+  if(slot.confirmed===player) slot.confirmed = null;
+  save(); renderAll(); adminRefresh();
+}
+function adminResetSlot(monday, slotId){
+  const week = D.videoweeks.find(w=>w.monday===monday);
+  const slot = week && week.slots.find(s=>s.id===slotId);
+  if(!slot) return;
+  slot.confirmed = null;
+  save(); renderAll(); adminRefresh();
+}
+
+function renderAll(){
+  const steps = [fillFilterSelects, renderOverview, renderTabelle, renderVerlauf,
+                 renderMeinSpieler, renderLeistung, renderVideo, renderEntwicklung];
+  steps.forEach(fn=>{ try{ fn(); } catch(e){ console.error(fn.name+' fehlgeschlagen:', e); } });
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────
+function openAdmin(){
+  document.getElementById('admin-overlay').style.display='block';
+  document.getElementById('al-wrap').style.display='block';
+  document.getElementById('ap-wrap').style.display='none';
+  document.getElementById('apw').value='';
+  document.getElementById('apw-err').style.display='none';
+}
+function closeAdmin(){ document.getElementById('admin-overlay').style.display='none'; renderAll(); }
+function doLogin(){
+  if(document.getElementById('apw').value===PW){
+    document.getElementById('al-wrap').style.display='none';
+    document.getElementById('ap-wrap').style.display='block';
+    document.getElementById('a-date').value = todayISO();
+    checkDateWarn();
+    adminRefresh();
+  } else document.getElementById('apw-err').style.display='block';
+}
+function checkDateWarn(){
+  const val = document.getElementById('a-date').value;
+  document.getElementById('a-datewarn').style.display = (val && !isTrainingsDay(val)) ? 'block' : 'none';
+}
+
+function adminRefresh(){
+  const steps = [fillFilterSelects, renderAdminPoints, renderAdminVerlauf, renderAdminPlayers, renderAdminVideo, fillEntwPlayerSelect];
+  steps.forEach(fn=>{ try{ fn(); } catch(e){ console.error(fn.name+' fehlgeschlagen:', e); } });
+}
+
+function renderAdminPoints(){
+  const date = document.getElementById('a-date').value || todayISO();
+  const cat = document.getElementById('a-cat').value || CATS[0];
+  const existing = D.entries.find(e=>e.date===date && e.category===cat);
+  document.getElementById('a-points').innerHTML = D.players.map((p,i)=>{
+    const val = existing && existing.points && existing.points[p]!==undefined ? existing.points[p] : '';
+    return `<div class="prow" id="prow_${i}">
+      <label onclick="event.stopPropagation()"><input type="checkbox" class="psel" id="sel_${i}" onchange="markRow(${i})"><span>${p}</span></label>
+      <div class="stepper">
+        <button type="button" class="step-btn" onclick="stepPoint(${i},-1)">−</button>
+        <input type="number" step="any" id="pt_${i}" value="${val}">
+        <button type="button" class="step-btn" onclick="stepPoint(${i},1)">+</button>
+      </div></div>`;
+  }).join('');
+}
+function markRow(i){
+  const cb = document.getElementById('sel_'+i);
+  const row = document.getElementById('prow_'+i);
+  if(row) row.classList.toggle('psel-active', cb && cb.checked);
+}
+function stepPoint(i, delta){
+  const el = document.getElementById('pt_'+i);
+  const cur = parseFloat(el.value) || 0;
+  el.value = cur + delta;
+}
+function applyBulk(onlySelected){
+  const v = document.getElementById('a-bulkval').value;
+  let count = 0;
+  D.players.forEach((p,i)=>{
+    const cb = document.getElementById('sel_'+i);
+    if(onlySelected && !(cb && cb.checked)) return;
+    const el = document.getElementById('pt_'+i);
+    if(el){ el.value = v; count++; }
+  });
+  if(onlySelected && count===0) alert('Bitte zuerst Spieler auswählen (Häkchen setzen).');
+}
+function toggleAllSel(state){
+  D.players.forEach((p,i)=>{ const cb = document.getElementById('sel_'+i); if(cb){ cb.checked = state; markRow(i); } });
+}
+function clearAllPoints(){
+  D.players.forEach((p,i)=>{ const el = document.getElementById('pt_'+i); if(el) el.value = ''; });
+}
+// Neu laden der Punkte-Eingabe, wenn Datum oder Kategorie geändert wird
+document.getElementById('a-date').addEventListener('change', renderAdminPoints);
+document.getElementById('a-cat').addEventListener('change', renderAdminPoints);
+
+function saveEntry(){
+  const date = document.getElementById('a-date').value;
+  const cat = document.getElementById('a-cat').value;
+  if(!date){ alert('Bitte ein Datum wählen.'); return; }
+  const points = {};
+  D.players.forEach((p,i)=>{
+    const el = document.getElementById('pt_'+i);
+    if(el && el.value!==''){ points[p] = parseFloat(el.value)||0; }
+  });
+  const idx = D.entries.findIndex(e=>e.date===date && e.category===cat);
+  if(idx>=0) D.entries[idx].points = points;
+  else D.entries.push({ id: 'e_'+Date.now()+'_'+Math.floor(Math.random()*1000), date, category:cat, points });
+  save();
+  renderAll();
+  adminRefresh();
+  const msg = document.getElementById('a-savemsg');
+  msg.textContent = '✓ Gespeichert!';
+  setTimeout(()=>{msg.textContent='';}, 2000);
+}
+
+function renderAdminVerlauf(){
+  const entries = D.entries.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('admin-verlauf').innerHTML = entries.length ? entries.map(e=>`
+    <div class="plist-item">
+      <span>${fmtDate(e.date)} · ${e.category} · ${Object.keys(e.points||{}).length} Spieler mit Punkten</span>
+      <button class="small-btn" onclick="editEntry('${e.id}')">✎ Bearbeiten</button>
+      <button class="small-btn" style="background:#c0392b" onclick="deleteEntry('${e.id}')">🗑 Löschen</button>
+    </div>`).join('') : '<p style="color:#aaa;font-style:italic;font-size:.85rem">Noch keine Einträge.</p>';
+}
+function editEntry(id){
+  const e = D.entries.find(x=>x.id===id);
+  if(!e) return;
+  document.getElementById('a-date').value = e.date;
+  document.getElementById('a-cat').value = e.category;
+  checkDateWarn();
+  renderAdminPoints();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function deleteEntry(id){
+  if(!confirm('Diesen Eintrag wirklich löschen?')) return;
+  D.entries = D.entries.filter(x=>x.id!==id);
+  save();
+  renderAll();
+  adminRefresh();
+}
+
+function renderAdminPlayers(){
+  document.getElementById('admin-players').innerHTML = D.players.map((p,i)=>`
+    <div class="plist-item"><span>${p}</span><button class="small-btn" style="background:#c0392b" onclick="removePlayer(${i})">🗑 Entfernen</button></div>
+  `).join('');
+}
+function addPlayer(){
+  const inp = document.getElementById('a-newplayer');
+  const name = inp.value.trim();
+  if(!name) return;
+  if(D.players.includes(name)){ alert('Spieler existiert bereits.'); return; }
+  D.players.push(name);
+  inp.value='';
+  save(); renderAll(); adminRefresh();
+}
+function removePlayer(i){
+  const name = D.players[i];
+  if(!confirm(`"${name}" wirklich aus der Spielerliste entfernen? (Bisherige Punkte bleiben in der Historie erhalten.)`)) return;
+  D.players.splice(i,1);
+  save(); renderAll(); adminRefresh();
+}
+
+function exportData(){
+  const blob = new Blob([JSON.stringify(D,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'trainingstabelle_backup_'+todayISO()+'.json';
+  a.click();
+}
+function importData(evt){
+  const file = evt.target.files[0];
+  if(!file) return;
+  const r = new FileReader();
+  r.onload = ev=>{
+    try{ D = mergeDefaults(JSON.parse(ev.target.result)); save(); renderAll(); adminRefresh(); alert('✓ Importiert!'); }
+    catch(err){ alert('Fehler: '+err); }
+  };
+  r.readAsText(file);
+}
+
+// Initiales Rendern (falls Firebase noch nicht bereit)
+renderAll();
+setInterval(()=>{
+  const b = document.getElementById('sync-badge');
+  if(!b) return;
+  b.style.display = (window.fbStatus==='offline') ? 'inline-block' : 'none';
+}, 1500);
+</script>
+</body>
+</html>
